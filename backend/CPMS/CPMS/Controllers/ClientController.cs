@@ -96,6 +96,14 @@ namespace CPMS.Controllers
             return Ok(res);
         }
 
+        [HttpGet("clients-working-project/{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<List<Client>>> getClientsUnderProject(int id)
+        {
+            var clients = await _IClientRepo.getClientsUnderProject(id);
+            return Ok(clients);
+        }
+
         [AllowAnonymous]
         [HttpPost("signin")]
         public async Task<IActionResult> SignIn(string email, string password)

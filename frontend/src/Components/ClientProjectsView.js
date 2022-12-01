@@ -90,7 +90,7 @@ const {id}= useParams();
                     </MDBRow>
                     <hr className="mt-0 mb-4"/>
                     
-                    <MDBBtn className="mb-4 px-6" color='dark' size='md'  onClick={()=>{navigate(`/admin/view/client/${project.clientId}`)}} >Back</MDBBtn>
+                    <MDBBtn className="mb-4 px-6" color='dark' size='md'  onClick={()=>{navigate(`/admin/handle/clients`)}} >Back</MDBBtn>
                   </MDBCardBody>
                 </MDBCol>
               </MDBRow>

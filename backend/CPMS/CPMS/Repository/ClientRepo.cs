@@ -137,6 +137,23 @@ namespace CPMS.Repository
             return  client;   
         }
 
+        public async Task<List<Client>> getClientsUnderProject(int id)
+        {
+            var _ClientProjects = await cPMDbContext.Client_Projects.Where(x => x.ProjectId == id).ToListAsync();
+            var res = new List<Client>();
+            foreach(var e in _ClientProjects)
+            {
+                var client =  await cPMDbContext.Clients.Where(x => x.Id == e.ClientId).Select(c=> new Client { 
+                    Id = c.Id,
+                    Name = c.Name
+                }).FirstOrDefaultAsync();
+                res.Add(client);
+            }
+
+            return res;
+
+        }
+
         public async Task<Client> SignIn(string email, string password)
         {
             var client = await cPMDbContext.Clients.Where(x => x.Email == email && x.Password == password).FirstOrDefaultAsync();

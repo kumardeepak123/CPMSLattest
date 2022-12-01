@@ -16,6 +16,8 @@ namespace CPMS.Repository
         Task<bool> UpdateClient(int id, Client client, int[] ProjectIds); //DONE
         Task<Client> DeleteClient(int id);//DONE
         Task<Client> SignIn(string email, string password);
- 
+
+        Task<List<Client>> getClientsUnderProject(int id);
+
     }
 }

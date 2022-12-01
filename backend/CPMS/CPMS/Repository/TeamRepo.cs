@@ -121,6 +121,11 @@ namespace CPMS.Repository
             return _Team;
         }
 
+        public async Task<List<Team>> GetTeamsUnderProject(int id)
+        {
+            return await _CPMDbContext.Teams.Where(t => t.ProjectId == id).ToListAsync();
+        }
+
         public async Task<List<Team>> GetTeamsWithNoProject()
         {
             var _Teams = await  _CPMDbContext.Teams.Where(t => t.ProjectId == null).Select(x=>new Team { 
@@ -130,5 +135,6 @@ namespace CPMS.Repository
             }).ToListAsync();
             return _Teams;
         }
+
     }
 }

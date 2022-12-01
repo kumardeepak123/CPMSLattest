@@ -61,7 +61,7 @@ return(
     <Card style={{background:"#cdebe0", border:"1px solid rgb(0,0,0)"}}>
       <Card.Body>
         <Card.Text>
-            <h4>View Profile</h4>
+            <h4 className="text-muted">View Profile</h4>
             
         </Card.Text>
         <Button style={{marginTop:"30px",backgroundColor:'#29ae7d'}} onClick={goToAdminProfile} >Go</Button>
@@ -72,7 +72,7 @@ return(
     <Card style={{background:"#cdebe0", border:"1px solid rgb(0,0,0)"}}>
       <Card.Body>
       <Card.Text>
-            <h4>Handle Clients</h4>
+            <h4 className="text-muted" >Handle Clients</h4>
             
         </Card.Text>
         <Button  style={{marginTop:"30px",backgroundColor:'#29ae7d'}} onClick={()=>navigate(`/admin/handle/clients`)} >Go</Button>
@@ -83,7 +83,7 @@ return(
     <Card style={{background:"#cdebe0", border:"1px solid rgb(0,0,0)"}}>
       <Card.Body>
       <Card.Text>
-            <h4>Manage Projects</h4>
+            <h4 className="text-muted" >Manage Projects</h4>
             
         </Card.Text>
         <Button  style={{marginTop:"30px",backgroundColor:'#29ae7d'}} onClick={()=>{navigate(`/admin/projects`)}} >Go</Button>
@@ -94,7 +94,7 @@ return(
     <Card style={{background:"#cdebe0", border:"1px solid rgb(0,0,0)"}}>
       <Card.Body>
       <Card.Text>
-            <h4>Manage Teams</h4>
+            <h4 className="text-muted" >Manage Teams</h4>
             
         </Card.Text>
         <Button  style={{marginTop:"30px",backgroundColor:'#29ae7d'}} onClick={()=>{navigate(`/admin/manage-teams`)}}>Go</Button>

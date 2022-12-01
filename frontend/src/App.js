@@ -23,6 +23,7 @@ import ClientProjectsView from './Components/ClientProjectsView';
 import ManageTeams from './Components/ManageTeams';
 import CreateTeam from './Components/CreateTeam';
 import CreateEmployee from './Components/CreateEmployee';
+import EditEmployee from './Components/EditEmployee';
 function App() {
   return (
     <div > 
@@ -49,6 +50,7 @@ function App() {
             <Route path='/admin/manage-teams' element={<Protected Cmp={ManageTeams}/>}/> 
             <Route path='/admin/create-team' element={<Protected Cmp={CreateTeam}/>}/> 
             <Route path='/admin/create-employee' element={<Protected Cmp={CreateEmployee}/>}/> 
+            <Route path='/admin/edit-employee/:id' element={<Protected Cmp={EditEmployee}/>}/> 
         </Route> 
         </Routes>
      </BrowserRouter>

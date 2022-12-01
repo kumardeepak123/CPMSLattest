@@ -13,6 +13,7 @@ namespace CPMS.Repository
         public Task<bool> EditTeam(int id, Team team, int[] emloyeeIds);
         public Task<bool> DeleteTeam(int id);
         public Task<List<Team>> GetTeamsWithNoProject();
+        public Task<List<Team>> GetTeamsUnderProject(int id);
         public Task<List<Team>> GetAllTeams();
     }
 }

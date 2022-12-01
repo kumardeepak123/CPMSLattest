@@ -3,18 +3,22 @@ import {useParams, useNavigate} from 'react-router-dom'
 import { MDBCol, MDBContainer, MDBRow, MDBCard, MDBCardText, MDBCardBody, MDBCardImage, MDBTypography, MDBIcon, MDBBtn} from 'mdb-react-ui-kit';
 
 const ViewProject=()=>{
-  const[project, setProject]= useState({
+const[project, setProject]= useState(
+  {
     "id": 0,
     "name": "",
     "startDate": "",
     "endDate": "",
     "technology": "",
-    "fRequirement": "",
     "nfRequirement": "",
     "budget": 0,
-    "_Client": null,
-    "clientId": 10
-});
+    "client_Projects": null,
+    "teams":[]
+}
+);
+const[clients, setClients]= useState([]);
+
+
 
 const user =  JSON.parse(localStorage.getItem('user-info'));
 const navigate = useNavigate();
@@ -30,13 +34,31 @@ const {id}= useParams();
         })
         .then(res=>res.json())
         .then(res=>{
+            
             setProject(res);
+            
+        })
+  }
+
+  const loadClients=async()=>{
+    await fetch(`https://localhost:44327/api/Client/clients-working-project/${id}`,{        
+                headers:{
+                    Authorization : `Bearer ${user.token}`
+                }
+            
+        })
+        .then(res=>res.json())
+        .then(res=>{
+            setClients(res);
         })
   }
 
   useEffect(()=>{
    loadData();
+   loadClients();
+   
   },[])
+  
   return (
     <section className="vh-100" >
       <MDBContainer className="py-5 h-100">
@@ -89,8 +111,63 @@ const {id}= useParams();
                       </MDBCol>
                     </MDBRow>
                     <hr className="mt-0 mb-4"/>
+
+                    <MDBRow className="pt-1">
+                          <MDBCol size="6" className="mb-3">
+                            <MDBTypography tag="h6">Clients</MDBTypography>                           
+                          </MDBCol>
+                          
+                    </MDBRow>
+                    {
+                          clients !== null && clients.length!=0 ?(
+                            clients.map((e,i)=>
+                            <ul key={i} className="list-group list-group-light">
+                                <li className="list-group-item d-flex justify-content-between align-items-center">
+                                  <div className="d-flex align-items-center">
+
+                                    <div className="ms-3">
+                                      <p className="fw-bold mb-1">{e.name}</p>
+                                    </div>
+                                  </div>
+                                  {/* <button className="btn  btn-rounded btn-sm mr-2" onClick={()=>{navigate(`/admin/client/project/${e.id}`)}}>View</button> */}
+                                  {/* <button className="btn  btn-rounded text-danger btn-sm" onClick={()=>{deallocateProject(e)}}>Deallocate</button> */}
+                                </li>
+                              </ul>
+                          )
+                          ):(
+                            <p style={{color:'red'}}>No clients availabe</p>
+                          )
+                        }
+                    <hr className="mt-0 mb-4"/>
+
+                    <MDBRow className="pt-1">
+                          <MDBCol size="6" className="mb-3">
+                            <MDBTypography tag="h6">Teams working on</MDBTypography>                           
+                          </MDBCol>
+                          
+                    </MDBRow>
+                    {
+                          project.teams !== null && project.teams.length!=0 ?(
+                            project.teams.map((e,i)=>
+                            <ul key={i} className="list-group list-group-light">
+                                <li className="list-group-item d-flex justify-content-between align-items-center">
+                                  <div className="d-flex align-items-center">
+
+                                    <div className="ms-3">
+                                      <p className="fw-bold mb-1">{e.name}</p>
+                                    </div>
+                                  </div>
+                                  {/* <button className="btn  btn-rounded btn-sm mr-2" onClick={()=>{navigate(`/admin/client/project/${e.id}`)}}>View</button> */}
+                                  {/* <button className="btn  btn-rounded text-danger btn-sm" onClick={()=>{deallocateProject(e)}}>Deallocate</button> */}
+                                </li>
+                              </ul>
+                          )
+                          ):(
+                            <p style={{color:'red'}}>No Teams assigned</p>
+                          )
+                        }
                     
-                    <MDBBtn className="mb-4 px-6" color='dark' size='md'  onClick={()=>{navigate(`/admin/projects`)}} >Back</MDBBtn>
+                    <button className="btn btn-secondary mt-2"  onClick={()=>{navigate(`/admin/projects`)}} >Back</button>
                   </MDBCardBody>
                 </MDBCol>
               </MDBRow>

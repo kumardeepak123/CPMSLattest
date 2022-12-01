@@ -83,5 +83,11 @@ namespace CPMS.Controllers
         {
             return await _ITeamRepo.GetAllTeams();
         }
+
+        [HttpGet("team-under-project/{id}")]
+        public async Task<List<Team>> GetTeamsWithUnderProject(int id)
+        {
+            return await _ITeamRepo.GetTeamsUnderProject(id);
+        }
     }
 }

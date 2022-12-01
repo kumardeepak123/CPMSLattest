@@ -1,6 +1,8 @@
 import React, {useState, useEffect}from 'react'
 import {useNavigate} from 'react-router-dom'
 import ReactPaginate from 'react-paginate';
+import { toast, ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 
 var items =[];
 
@@ -16,7 +18,7 @@ const AllProjects=()=>{
 
    const navigate = useNavigate();
    const loadData=async()=>{
-    await fetch(`https://localhost:44327/api/Project/all`,{
+    await fetch(`https://localhost:44327/api/Project/all-projects`,{
         
             headers:{
                 Authorization : `Bearer ${user.token}`
@@ -39,7 +41,7 @@ const AllProjects=()=>{
     {
         return;
     }
-        fetch(`https://localhost:44327/api/Project/delete/${id}`,{
+        fetch(`https://localhost:44327/api/Project/delete-project/${id}`,{
         method:'DELETE',    
         headers:{
                 Authorization:`Bearer ${user.token}`
@@ -47,7 +49,9 @@ const AllProjects=()=>{
         })
         .then(res=>res.json())
         .then(res=>{
-            alert("Project deleted successfully");
+            toast.success("deleted successfully!", {
+                position: toast.POSITION.TOP_RIGHT
+              });
             loadData();
 
         })
@@ -82,11 +86,7 @@ const AllProjects=()=>{
                             <p class="text-muted mb-0">Budget: {p.budget}cr</p>
                             </div>
                         </div>
-                        {p.clientId!= null?(
-                            <span class="badge rounded-pill badge-success">Assigned</span>
-                        ) :(
-                            <span class="badge rounded-pill badge-warning">Not Assigned</span>
-                        )}
+                        
                         </div>
                     </div>
                     <div
@@ -128,6 +128,7 @@ const AllProjects=()=>{
         activeClassName="active"
         renderOnZeroPageCount={null}
       />
+      <ToastContainer />
         </div>
     )
 }

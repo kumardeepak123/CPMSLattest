@@ -38,7 +38,7 @@ const EditAdmin=()=>{
 
     const loadAdminInfo= async()=>{
         
-        await fetch(`https://localhost:44327/api/Client/details/${id}`,{
+        await fetch(`https://localhost:44327/api/Client/client-details/${id}`,{
            headers:{
                "Authorization" : `Bearer ${user.token}`
            }
@@ -100,7 +100,7 @@ const EditAdmin=()=>{
             formData.append("AgreementPaperSrc", client.agreementPaperSrc);
             formData.append("ProfileImageFile", client.profileImageFile);
             formData.append("AgreementPaperFile", client.agreementPaperFile);
-            fetch(`https://localhost:44327/api/Client/update/${client.id}`,{
+            fetch(`https://localhost:44327/api/Client/update-client/${client.id}`,{
             method:'PUT',
             headers:{
                 "Authorization" : `Bearer ${user.token}`,

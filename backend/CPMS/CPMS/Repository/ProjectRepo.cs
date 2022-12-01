@@ -68,7 +68,17 @@ namespace CPMS.Repository
 
                 }
             }
+
+            var _client_projects = await cPMDbContext.Client_Projects.Where(x => x.ProjectId == id).ToListAsync();
+            if(_client_projects!= null && _client_projects.Count >= 1)
+            {
+                foreach(var r in _client_projects)
+                {
+                    cPMDbContext.Client_Projects.Remove(r);
+                }
+            }
             cPMDbContext.Projects.Remove(project);
+
             await cPMDbContext.SaveChangesAsync();
             return true;
         }
@@ -96,7 +106,8 @@ namespace CPMS.Repository
                     Id= t.Id,
                     Name = t.Name,
                     Employees= t.Employees
-                }).ToList()
+                }).ToList(),
+
             }).FirstOrDefaultAsync();
             
             return project;

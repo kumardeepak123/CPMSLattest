@@ -12,19 +12,29 @@ import {
     MDBFile
   }
   from 'mdb-react-ui-kit';
+import Select from 'react-select';
+import makeAnimated from 'react-select/animated';
+import { toast, ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
+const animatedComponents = makeAnimated();
+
 const EditProject=()=>{
     const[project, setProject]= useState({
-        "id": 0,
-        "name": "",
-        "startDate":'',
-        "endDate": "",
-        "technology": "",
-        "fRequirement": "",
-        "nfRequirement": "",
-        "budget": 0,
-        "_Client": null,
-        "clientId": 10
+      "id": 0,
+      "name": "",
+      "startDate": "",
+      "endDate": "",
+      "technology": "",
+      "nfRequirement": "",
+      "fRequirement":"",
+      "budget": 0,
+      "client_Projects": null,
+      "teams": []      
+    
     });
+    const [selectedOption, setSelectedOption] = useState(null);
+    const[teams, setTeams]= useState([]);
+    const[dropItems, setDropItems]= useState([]);
     const[showSd, setShowSd]= useState(true);
     const[showED, setShowED]= useState(true);
 
@@ -35,7 +45,9 @@ const EditProject=()=>{
     const handleChange=name=>(event)=>{
         setProject({...project,[name]:event.target.value})
      }
-
+  const handleChangeDropdown = e => {
+      setSelectedOption(e);
+  }
 
     const editProject=()=>{
 
@@ -43,18 +55,29 @@ const EditProject=()=>{
       project.budget===""|| project.technology===""|| project.fRequirement===""
       ||project.nfRequirement==="")
       {
-          alert("Please include all the fields");
+        toast.error("Please include all the fields", {
+          position: toast.POSITION.TOP_RIGHT
+        });
           return;
       }
       
       const sDate = Moment(project.startDate).format('YYYY-MM-DD');
       const eDate = Moment(project.endDate).format('YYYY-MM-DD');
       if(eDate<=sDate){
-          alert("End date should be greater than start date");
+        toast.error("End date should be greater than start date", {
+          position: toast.POSITION.TOP_RIGHT
+        });
           return;
       }
 
-     fetch(`https://localhost:44327/api/Project/update/${id}`,{
+      var teamIds ="";
+            for(var i=0;i<project.teams.length;i++){
+              teamIds = teamIds+project.teams[i].id+","
+            }
+            teamIds = teamIds.slice(0,-1);
+
+      
+     fetch(`https://localhost:44327/api/Project/update-project/${id}?TeamIds=${teamIds}`,{
         method:'PUT',
         headers:{
             Authorization:`Bearer ${user.token}`,
@@ -65,8 +88,12 @@ const EditProject=()=>{
      })
      .then(res=>res.json())
      .then(res=>{
-        alert("Project updated successfully");
-        navigate(`/admin/projects`);
+      toast.success("Saved successfully", {
+        position: toast.POSITION.TOP_RIGHT
+      });
+        setTimeout(()=>{
+          navigate(`/admin/projects`);
+        }, 3000);
      })
     }
 
@@ -80,12 +107,63 @@ const EditProject=()=>{
         })
         .then(res=>res.json())
         .then(res=>{
-            setProject(res);
+          
+           setProject(res);
+          });
+        
+        
+  }
+   
+  const loadTeams=async ()=>{
+    await fetch(`https://localhost:44327/api/Team/team-with-no-project`,{                    
         })
+        .then(res=>res.json())
+        .then(res=>{
+          const temp= 
+          [
+          ];
+
+        for(var i=0;i<res.length;i++)
+        {
+          const obj={label:'', Id:0, value:0};
+          obj.label = res[i].name;
+          obj.Id = res[i].id;
+          obj.value = i;
+          temp.push(obj);
+        }
+            setDropItems(temp);
+        })
+  }
+
+  const loadSelectedOptions= async()=>{
+    await fetch(`https://localhost:44327/api/Team/team-under-project/${id}`,{                    
+    })
+    .then(res=>res.json())
+    .then(res=>{
+      const temp= 
+      [
+      ];
+      var t = [...dropItems];
+    for(var i=0;i<res.length;i++)
+    {
+      const obj={label:'', Id:0, value:0};
+      obj.label = res[i].name;
+      obj.Id = res[i].id;
+      obj.value = i;
+      temp.push(obj);
+      t.push(obj);
+    }
+    
+    
+    setDropItems(t);
+    setSelectedOption(temp);
+    })
   }
 
   useEffect(()=>{
    loadData();
+  //  loadTeams();
+  // loadSelectedOptions();
   },[])
 
      return (
@@ -214,7 +292,21 @@ const EditProject=()=>{
                     </MDBCol>
                 </MDBRow>
     
-                  <hr className="mx-n3" />
+                  {/* <hr className="mx-n3" />
+                  <MDBRow className='align-items-center pt-4 pb-3'>
+    
+                    <MDBCol md='3' className='ps-5'>
+                      <h6 className="mb-0">Edit Teams</h6>
+                    </MDBCol> 
+                    <MDBCol md='9' className='pe-5'>
+                    <Select options={dropItems} components={animatedComponents}
+                        placeholder="select teams.."
+                        value={selectedOption} 
+                        onChange={handleChangeDropdown}
+                        isMulti />
+                    </MDBCol>
+                       
+                  </MDBRow> */}
     
                   <button className='btn btn-lg btn-primary mr-3'  onClick={editProject}>Edit</button>
                   <button className='btn btn-lg btn-secondary'  onClick={()=>{navigate(`/admin/projects`)}}>Cancel</button>
@@ -224,7 +316,9 @@ const EditProject=()=>{
     
             </MDBCol>
           </MDBRow>
-    
+          
+          
+          <ToastContainer />
         </MDBContainer>
       );
 }

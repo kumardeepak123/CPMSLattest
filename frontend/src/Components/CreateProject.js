@@ -1,4 +1,4 @@
-import React ,{useState}from "react";
+import React ,{useEffect, useState}from "react";
 import {useNavigate} from 'react-router-dom'
 import {
     MDBContainer,
@@ -12,6 +12,12 @@ import {
   }
   from 'mdb-react-ui-kit';
 import Moment from 'moment';
+import Select from 'react-select';
+import makeAnimated from 'react-select/animated';
+import { toast, ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
+
+const animatedComponents = makeAnimated();
 
 const CreateProject=()=>{
 
@@ -27,29 +33,77 @@ const CreateProject=()=>{
         "_Client": null,
         "clientId": 0
     });
+   const[teams, setTeams]= useState([]);
+   const [selectedOption, setSelectedOption] = useState(null);
 
     const user =  JSON.parse(localStorage.getItem('user-info'));
     const navigate = useNavigate();
+
     const handleChange=name=>(event)=>{
        setProject({...project,[name]:event.target.value})
     }
+   
+    const handleChangeDropdown = e => {
+      setSelectedOption(e);
+    }
+
+    const loadTeams=async()=>{
+      await fetch(`https://localhost:44327/api/Team/team-with-no-project`,{
+        method:'GET'
+     })
+     .then(res=> res.json())
+     .then(res=>{
+        
+      const temp= 
+      [
+      ];
+
+    for(var i=0;i<res.length;i++)
+    {
+      const obj={label:'', Id:0, value:0};
+      obj.label = res[i].name;
+      obj.Id = res[i].id;
+      obj.value = i;
+      temp.push(obj);
+    }
+    setTeams(temp);
+        
+     })
+    }
+    useEffect(()=>{
+      loadTeams();
+    },[])
 
     const addProject=()=>{
         if(project.name===""|| project.startDate===""|| project.endDate==="" ||
         project.budget===""|| project.technology===""|| project.fRequirement===""
         ||project.nfRequirement==="")
         {
-            alert("Please include all the fields");
+          toast.error("Please include all the fields", {
+            position: toast.POSITION.TOP_RIGHT
+          });
             return;
         }
         
         const sDate = Moment(project.startDate).format('YYYY-MM-DD');
         const eDate = Moment(project.endDate).format('YYYY-MM-DD');
         if(eDate<=sDate){
-            alert("End date should be greater than start date");
+          toast.error("End date should be greater than start date", {
+            position: toast.POSITION.TOP_RIGHT
+          });
             return;
         }
-        fetch(`https://localhost:44327/api/Project/create`,{
+
+        var teamIds ="";
+        for(var i=0;i<selectedOption.length;i++){
+          teamIds = teamIds+selectedOption[i].Id+","
+        }
+        teamIds = teamIds.slice(0,-1);
+        
+        
+       
+
+        fetch(`https://localhost:44327/api/Project/create-project?TeamIds=${teamIds}`,{
             method:'POST',
             headers:{
                 Authorization : `Bearer ${user.token}`,
@@ -61,9 +115,13 @@ const CreateProject=()=>{
         })
         .then(res=>res.json())
         .then(res=>{
-            alert('Project created successfully');           
+          toast.success("Created successfully", {
+            position: toast.POSITION.TOP_RIGHT
+          });        
             setProject({});
-            navigate(`/admin/projects`);
+            setTimeout(()=>{
+              navigate(`/admin/projects`);
+            },3000);
         })
     }
 
@@ -168,16 +226,34 @@ const CreateProject=()=>{
                 </MDBRow>
     
                   <hr className="mx-n3" />
+                  <MDBRow className='align-items-center pt-4 pb-3'>
+    
+                    <MDBCol md='3' className='ps-5'>
+                      <h6 className="mb-0">Select Teams</h6>
+                    </MDBCol>
+    
+                    <MDBCol md='9' className='pe-5'>
+
+                    <Select options={teams} components={animatedComponents}
+                        placeholder="Select teams.."
+                        value={selectedOption} 
+                        onChange={handleChangeDropdown}
+                        isMulti />
+
+                    </MDBCol>
+    
+                  </MDBRow>
+
     
                   <button className='btn btn-lg btn-primary mr-3'  onClick={addProject}>Create</button>
-                  <button className='btn btn-lg btn-secondary'  onClick={()=>{navigate(`/admin/projects`)}}>Cancel</button>
+                  <button className='btn btn-lg btn-secondary'  onClick={()=>{navigate(`/admin/projects`)}}>Back</button>
     
                 </MDBCardBody>
               </MDBCard>
     
             </MDBCol>
           </MDBRow>
-    
+          <ToastContainer />
         </MDBContainer>
       );
 }

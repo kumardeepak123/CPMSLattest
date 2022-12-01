@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace CPMS_test
 {
-   /* public class ProjectRepoTest
+    public class ProjectRepoTest
     {
         private static DbContextOptions<CPMDbContext> dbContextOptions = new DbContextOptionsBuilder<CPMDbContext>()
                .UseInMemoryDatabase(databaseName: "CPMSProjectTest")
@@ -43,9 +43,10 @@ namespace CPMS_test
                 FRequirement = "F.R.2",
                 NFRequirement = "N.F.R.2",
                 Budget = 5000,
-                ClientId = null
+                
             };
-            var res = await _ProjectRepo.CreateProject(_Project);
+            var TeamIds = new int[] { 1, 2 };
+            var res = await _ProjectRepo.CreateProject(_Project, TeamIds);
             Assert.That(res, Is.True);
         }
 
@@ -84,21 +85,13 @@ namespace CPMS_test
         public async Task GetProjectsUnderClient_Test()
         {
 
-            var res = await _ProjectRepo.GetProjectsUnderClient(3);
+            var res = await _ProjectRepo.GetProjectsUnderClient(1);
             Assert.That(res, Is.Not.Null);
             Assert.That(res.Count, Is.EqualTo(2));
-            
+
         }
+       
         [Test, Order(7)]
-        public async Task GetProjectsWithNoClient_Test()
-        {
-
-            var res = await _ProjectRepo.GetProjectsWithNoClient();
-            Assert.That(res, Is.Not.Empty);
-            Assert.That(res.First().Name, Is.EqualTo("Airline Management System"));
-
-        }
-        [Test, Order(8)]
         public async Task UpdateProjects_WithResponse_Test()
         {
             var _Project = new Project
@@ -111,14 +104,15 @@ namespace CPMS_test
                 FRequirement = "F.R.2",
                 NFRequirement = "N.F.R.2",
                 Budget = 5000,
-                ClientId = null
+                
             };
-            var res = await _ProjectRepo.UpdateProject(2, _Project);
+            var TeamIds = new int[] { 1, 2 };
+            var res = await _ProjectRepo.UpdateProject(2, _Project, TeamIds);
             Assert.That(res, Is.True);
-           
+
 
         }
-        [Test, Order(9)]
+        [Test, Order(8)]
         public async Task UpdateProjects_WithoutResponse_Test()
         {
             var _Project = new Project
@@ -131,9 +125,10 @@ namespace CPMS_test
                 FRequirement = "F.R.2",
                 NFRequirement = "N.F.R.2",
                 Budget = 5000,
-                ClientId = null
+                
             };
-            var res = await _ProjectRepo.UpdateProject(245, _Project);
+            var TeamIds = new int[] { 1, 2 };
+            var res = await _ProjectRepo.UpdateProject(245, _Project, TeamIds);
             Assert.That(res, Is.False);
 
 
@@ -198,8 +193,8 @@ namespace CPMS_test
                     Technology= "MERN",
                     FRequirement="F.R.1",
                     NFRequirement="N.F.R.1",
-                    Budget= 1000,
-                    ClientId= 3
+                    Budget= 1000
+                    
                 },
                  new Project
                 {
@@ -210,8 +205,8 @@ namespace CPMS_test
                     Technology= "MEAN",
                     FRequirement="F.R.2",
                     NFRequirement="N.F.R.2",
-                    Budget= 5000,
-                    ClientId= 3
+                    Budget= 5000
+                    
                 },
                   new Project
                 {
@@ -222,8 +217,8 @@ namespace CPMS_test
                     Technology= "LAMP",
                     FRequirement="F.R.3",
                     NFRequirement="N.F.R.3",
-                    Budget= 2000,
-                    ClientId= 1
+                    Budget= 2000
+                   
                 },
                  new Project
                 {
@@ -234,16 +229,68 @@ namespace CPMS_test
                     Technology= "MERN",
                     FRequirement="F.R.4",
                     NFRequirement="N.F.R.4",
-                    Budget= 5000,
-                    ClientId= null
+                    Budget= 5000
+                    
                 }
 
             };
 
+            var Client_Projects = new List<Client_Project>
+            {
+                new Client_Project{Id =1, ClientId=1, ProjectId=1},
+                new Client_Project{Id=2, ClientId=1, ProjectId=2},
+                new Client_Project{Id=3, ClientId=2, ProjectId=3}
+            };
+
+            var Teams = new List<Team>
+            {
+                new Team{Id =1, Name= "Team-1"},
+                new Team{Id=2, Name="Team-2"},
+                new Team{Id=3,Name="Team-3"}
+            };
+
+            var Employees = new List<Employee>
+            {
+                new Employee
+                {
+                    Id =1,
+                    Name="Deepak",
+                    Email="deepak@gmail.com",
+                    Password="12345",
+                    Phone="9769898989",
+                    Designation="Frontend Developer",
+                    TeamId=1
+                },
+                new Employee
+                {
+                    Id =2,
+                    Name="Sahoo",
+                    Email="saho@gmail.com",
+                    Password="12345",
+                    Phone="4569898989",
+                    Designation="Backend Developer",
+                    TeamId=1
+                },
+                 new Employee
+                {
+                    Id =3,
+                    Name="Yogesh",
+                    Email="yogesh@gmail.com",
+                    Password="12345",
+                    Phone="4569898952",
+                    Designation="Tester",
+                    TeamId=1
+                }
+            };
+
             context.Clients.AddRange(_Clients);
             context.Projects.AddRange(_Projects);
+            context.Client_Projects.AddRange(Client_Projects);
+            context.Employees.AddRange(Employees);
+            context.Teams.AddRange(Teams);
+
             context.SaveChanges();
 
         }
-    }*/
+    }
 }

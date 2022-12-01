@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 
 namespace CPMS_test
 {
-    /*public class ClientRepoTest
-    {   
+    public class ClientRepoTest
+    {
         private static DbContextOptions<CPMDbContext> dbContextOptions = new DbContextOptionsBuilder<CPMDbContext>()
                .UseInMemoryDatabase(databaseName: "CPMSTest")
                .Options;
@@ -20,8 +20,8 @@ namespace CPMS_test
 
         [OneTimeSetUp]
         public void Setup()
-        {  
-           
+        {
+
             context = new CPMDbContext(dbContextOptions);
             context.Database.EnsureCreated();
             SeedDatabase();
@@ -31,7 +31,7 @@ namespace CPMS_test
         [Test, Order(1)]
         public async Task GetAllClients_WithNoFilter_Test()
         {
-            var res =  await _ClientRepo.getAllClients("","","");
+            var res = await _ClientRepo.getAllClients("", "", "");
             Assert.That(res.Count, Is.EqualTo(3));
         }
 
@@ -48,14 +48,14 @@ namespace CPMS_test
             var res = await _ClientRepo.getClientById(3);
             Assert.That(res, Is.Not.Null);
             Assert.That(res.Name, Is.EqualTo("Aman"));
-            
+
         }
         [Test, Order(4)]
         public async Task GetClientById_WithoutResponse_Test()
         {
             var res = await _ClientRepo.getClientById(899);
             Assert.That(res, Is.Null);
-            
+
 
         }
 
@@ -74,7 +74,8 @@ namespace CPMS_test
                 AgreementPaperName = "agree1.pdf",
                 Role = "Client"
             };
-            var res = await _ClientRepo.AddClient(client);
+            var ProjectIds = new int[] { 1, 2 };
+            var res = await _ClientRepo.AddClient(client, ProjectIds);
             Assert.That(res, Is.True);
 
         }
@@ -111,7 +112,9 @@ namespace CPMS_test
                 AgreementPaperName = "agree1.pdf",
                 Role = "Client"
             };
-            var res = await _ClientRepo.UpdateClient(1, client);
+            var ProjectIds = new int[] { 1, 2 };
+
+            var res = await _ClientRepo.UpdateClient(1, client, ProjectIds);
             Assert.That(res, Is.True);
 
         }
@@ -131,7 +134,8 @@ namespace CPMS_test
                 AgreementPaperName = "agree1.pdf",
                 Role = "Client"
             };
-            var res = await _ClientRepo.UpdateClient(856, client);
+            var ProjectIds = new int[] { 1, 2 };
+            var res = await _ClientRepo.UpdateClient(856, client, ProjectIds);
             Assert.That(res, Is.False);
 
         }
@@ -142,7 +146,7 @@ namespace CPMS_test
         {
             context.Database.EnsureDeleted();
         }
-        
+
         private void SeedDatabase()
         {
             var _Clients = new List<Client>()
@@ -196,8 +200,8 @@ namespace CPMS_test
                     Technology= "MERN",
                     FRequirement="F.R.1",
                     NFRequirement="N.F.R.1",
-                    Budget= 1000,
-                    ClientId= 3
+                    Budget= 1000
+                    
                 },
                  new Project
                 {
@@ -208,8 +212,8 @@ namespace CPMS_test
                     Technology= "MEAN",
                     FRequirement="F.R.2",
                     NFRequirement="N.F.R.2",
-                    Budget= 5000,
-                    ClientId= 3
+                    Budget= 5000
+                    
                 },
                   new Project
                 {
@@ -221,15 +225,24 @@ namespace CPMS_test
                     FRequirement="F.R.3",
                     NFRequirement="N.F.R.3",
                     Budget= 2000,
-                    ClientId= 1
+                    
                 },
 
             };
 
+            var Client_Projects = new List<Client_Project>
+            {
+                new Client_Project{Id =1, ClientId=1, ProjectId=1},
+                new Client_Project{Id=2, ClientId=1, ProjectId=2},
+                new Client_Project{Id=3, ClientId=2, ProjectId=3}
+            };
+
             context.Clients.AddRange(_Clients);
             context.Projects.AddRange(_Projects);
+            context.Client_Projects.AddRange(Client_Projects);
+
             context.SaveChanges();
 
         }
-    }*/
+    }
 }
